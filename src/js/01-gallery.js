@@ -1,12 +1,11 @@
 // Add imports above this line
-import { galleryItems } from './gallery-items';
-// Change code below this line
-
-console.log(galleryItems);
 // Описан в документации
 import SimpleLightbox from "simplelightbox";
-// Дополнительный импорт стилей
 import "simplelightbox/dist/simple-lightbox.min.css";
+
+import { galleryItems } from './gallery-items';
+console.log(galleryItems);
+// Change code below this line
 
 
 const galleryContainer = document.querySelector('.gallery');
@@ -16,7 +15,7 @@ galleryContainer.insertAdjacentHTML('beforeend', cardsMarkup); /* распарс
 function createGalleryCardsMarkup(galleryItems) { /*создаем динамическкю разметку, рендерим всю разметку галереи */
   const markup = galleryItems.map(({ preview, original, description }) => { /* мепаем массив, возвращаем карточку для каждого объекта, и деструктуризируем свойства (preview, original, description), свойства на объекте есть, приходят в колбек мэпа и деструктуризируем */
     return `
-  <li class='gallery__item'>
+  <li class='gallery__item' style=' list-style-type: none'>
     <a class='gallery__link' href='${original}'>
       <img class='gallery__image'
       src='${preview}' 
