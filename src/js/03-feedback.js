@@ -11,12 +11,14 @@ const filterForm = document.querySelector('.feedback-form');
 
 // textareaMessage();
 filterForm.addEventListener('submit', onFormSubmit);
-// textareaEl.addEventListener('input', throttle(onTextareaInput, 500));
-filterForm.addEventListener('input', throttle(evt => {
-  selectedFilters[evt.target.name] = evt.target.value;
-  onTextareaInput();
-}, 500)
-);
+
+filterForm.addEventListener('input', throttle(onTextareaInput, 500));
+
+// filterForm.addEventListener('input', throttle(evt => {
+//   selectedFilters[evt.target.name] = evt.target.value;
+//   onTextareaInput();
+// }, 500)
+// );
 
 
 function onTextareaInput() { /* Функция onTextareaInput вызывается при вводе текста в поле и сохраняет значение в localStorage. */
@@ -29,6 +31,7 @@ function onTextareaInput() { /* Функция onTextareaInput вызывает�
 //   const message = filterForm.elements.message.value;
 //   const currentState = { email, message };
 // localStorage.setItem(STORAGE_KEY, JSON.stringify(currentState));
+
 const currentState = JSON.stringify(selectedFilters);
 localStorage.setItem(STORAGE_KEY, currentState);
 };
