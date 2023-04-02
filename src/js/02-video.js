@@ -13,9 +13,13 @@ const iframe = document.querySelector('iframe');
 const player = new Player(iframe);
 /* Используем API проигрывателя Vimeo для обработки событий и действий, связанных с видеопроигрывателем, встроенным в документ HTML, через элемент iframe. Импортируюм Player класс из библиотеки Vimeo Player и создает новый экземпляр класса Player с iframe-элементом, выбранным в документе. */
 const currentTime = 'videoplayer-current-time'; /* Переменная currentTime устанавливает ключ для сохранения текущего времени воспроизведения видео в объекте localStorage. */
-player.on('timeupdate', throttle(function (time) { /* Когда видеоплеер воспроизводит видео, событие "timeupdate" генерируется в регулярных интервалах. Функция, переданная в throttle, вызывается при каждом событии timeupdate, но не чаще, чем каждые 1000 миллисекунд. Это означает, что значение текущего времени сохраняется в localStorage только один раз в секунду, что помогает избежать избыточного использования ресурсов. В функции обработки события timeupdate, значение текущего времени воспроизведения видео измеряется в секундах и сохраняется в localStorage с использованием ключа currentTime */
+player.on('timeupdate', throttle(function (time) { /* Player регистрирует обработчик событий timeupdate, который будет вызываться при изменении текущего времени воспроизведения видео. Функция throttle ограничивает вызов этого обработчика событий до одного раза в секунду. Внутри этого обработчика событий текущее время воспроизведения сохраняется в localStorage браузера в формате JSON */
   localStorage.setItem(currentTime, JSON.stringify(time.seconds));
 }, 1000)
 );
+const saveTime = localStorage.getItem(currentTime);
 
-player.setCurrentTime(JSON.parse(localStorage.getItem(currentTime)) || 0); /* setCurrentTime устанавливает время воспроизведения видео, которое было сохранено в localStorage при предыдущем воспроизведении видео, если такое значение было сохранено, иначе устанавливается значение 0, начиная с начала видео. */
+const timeStop = JSON.parse(saveTime);
+
+
+player.setCurrentTime(timeStop.seconds || 0); /* setCurrentTime устанавливает время воспроизведения видео, которое было сохранено в localStorage при предыдущем воспроизведении видео, если такое значение было сохранено, или на 0, если сохраненное время не существует. */
