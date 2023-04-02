@@ -14,7 +14,7 @@ const player = new Player(iframe);
 /* Используем API проигрывателя Vimeo для обработки событий и действий, связанных с видеопроигрывателем, встроенным в документ HTML, через элемент iframe. Импортируюм Player класс из библиотеки Vimeo Player и создает новый экземпляр класса Player с iframe-элементом, выбранным в документе. */
 const currentTime = 'videoplayer-current-time'; /* Переменная currentTime устанавливает ключ для сохранения текущего времени воспроизведения видео в объекте localStorage. */
 player.on('timeupdate', throttle(function (time) { /* Player регистрирует обработчик событий timeupdate, который будет вызываться при изменении текущего времени воспроизведения видео. Функция throttle ограничивает вызов этого обработчика событий до одного раза в секунду. Внутри этого обработчика событий текущее время воспроизведения сохраняется в localStorage браузера в формате JSON */
-  localStorage.setItem(currentTime, JSON.stringify(time.seconds));
+  localStorage.setItem(currentTime, JSON.stringify(time));
 }, 1000)
 );
 const saveTime = localStorage.getItem(currentTime);
