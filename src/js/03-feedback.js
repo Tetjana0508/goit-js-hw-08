@@ -51,8 +51,9 @@ filterForm.addEventListener('input', e => { /* Делегирование. На 
 
 
 
-
-
+// const filterForm = document.querySelector('.feedback-form');
+// const STORAGE_KEY = 'feedback-form-state';
+// let selectedFilters = {};
 // initForm(); /* Инициализируем форму. */
 
 // filterForm.addEventListener('submit', evt => { /* слушатель на submit */
@@ -66,7 +67,14 @@ filterForm.addEventListener('input', e => { /* Делегирование. На 
 // filterForm.addEventListener('change', evt => { /* Делегирование. Слушатель на общий контейнер,и внутри этого слушателя по evt.target прослушиваем события.У каждого селекта есть событие как change, вешаем на форму */
 //   selectedFilters[evt.target.name] = evt.target.value; /* когда будем чендить, в объект пустой selectedFilters -> имя ключа [evt.target.name] и значением ставим evt.target.value. [evt.target.name] берем значение свойства name у evt.target как строку и обращаемся к свойству, єто динамическое значение ключей которого названий не знаем */
 //   localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedFilters)); /* При перезагрузке страницы сохранияем данные в локальном хранилище. Когда объект приводится из коробки к строке используем JSON.stringify чтоб привести к строке */
+
 // });
+
+// filterForm.addEventListener('reset', evt => { /* Есть глобальная форма reset */
+  // selectedFilters = {}; /* selectedFilters очищаем, когда сабмитим формы, хотим сбросить фильтры */
+  // localStorage.removeItem(STORAGE_KEY) /* Из локального хранилица removeItem очищает данные */
+// }
+
 
 // function initForm() { /* Инициализируем форму. Вытягиваем фильтры из localStorage */
 //   let persistedFilters = localStorage.getItem(STORAGE_KEY); /* при выполнении функции initForm мы взяли фильтры, но они в виде строки {'size': 'xl'}, нфдо распарсить */
@@ -79,3 +87,81 @@ filterForm.addEventListener('input', e => { /* Делегирование. На 
 //     })
 //   }
 // }
+
+
+
+/* Если хотим убрать глобальную переменную selectedFilters, мы дублируем и храним в памяти фильтры и + хотим хранить фильтры в локальном хранилище, вносим изменения.
+Переменная selectedFilters позволяет без чтения localStorage изменять объект и потом в localStorage записывать, но так же ее приходится сбрасывать и инициализировать каждый раз. 
+
+- в initForm() инициализируем
+- filterForm.addEventListener('reset' - сбрасываем selectedFilters
+Везде ее убираем */
+
+// const filterForm = document.querySelector('.feedback-form');
+// const STORAGE_KEY = 'feedback-form-state';
+// let selectedFilters = {}; УДАЛЯЕМ
+// initForm(); 
+
+// filterForm.addEventListener('submit', evt => {
+//   evt.preventDefault();
+//   console.log(filterForm.elements);
+//   const formData = new FormData(filterForm);
+//   console.log(formData)
+//   formData.forEach((value, name) => console.log(value, name));
+// });
+
+// filterForm.addEventListener('change', evt => {
+//   selectedFilters[evt.target.name] = evt.target.value; УДАЛЯЕМ
+//   localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedFilters)); УДАЛЯЕМ
+// let persistedFilters = localStorage.getItem(STORAGE_KEY) /* При изменении фильтра надо прочитать из локального хранилища, посмотреть есть ли там объект (пишем localStorage.getItem), как-то его изменить и потом его заново сохранить в локал.хранилище */
+/* отобразит null, если фильтры не были сохранены в localStorage, то инициализируем пустой объект, если были сохранены ранее то их парсим */
+
+// if(persistedFilters) { /* если persistedFilters есть, то... */
+  // persistedFilters = JSON.parse(persistedFilters); /* парсим persistedFilters */
+// } else { /* если нет, сохранится пустой объект */
+  // persistedFilters = {};
+// }
+// 
+// -----можно if заменить тернарником:
+//  persistedFilters = persistedFilters ? JSON.parse(persistedFilters) : {};
+// persistedFilters[evt.target.name] = evt.target.value; /* возьми свойство [evt.target.name] и запиши в такое значение evt.target.value */
+// localStorage.setItem(STORAGE_KEY, JSON.stringify(persistedFilters)); /* после чего кидаем в локальное хранилище (persistedFilters[evt.target.name] = evt.target.value) */
+// console.log(persistedFilters);
+// });
+/* каждый раз когда выбираем новую опцию в селекте, берем из (let persistedFilters = localStorage.getItem(STORAGE_KEY)) то что было ранее сохранено, если там что-то есть (persistedFilters = persistedFilters ? JSON.parse(persistedFilters) : {};) парсим его, если нету ничего, начинаем с пустого объкта. Потом записываем ([evt.target.name]) и (evt.target.value) или изменяем старый или дописываем в новый и потом обратно кидаем в локальное хранилище (localStorage.setItem(STORAGE_KEY, JSON.stringify(persistedFilters)))*/
+
+// filterForm.addEventListener('reset', () => {
+  // selectedFilters = {}; УДАЛЯЕМ
+  // localStorage.removeItem(STORAGE_KEY)
+// }
+
+// function initForm() {
+//   let persistedFilters = localStorage.getItem(STORAGE_KEY);
+//   if (persistedFilters) {
+//     persistedFilters = JSON.parse(persistedFilters);
+//     console.log(persistedFilters);
+//     Object.entries(persistedFilters).forEach(([name, value]) => {
+//       selectedFilters[name] = value; УДАЛЯЕМ
+//       filterForm.elements[name].value = value;
+//     })
+//   }
+// }
+
+
+// Функцию можно записать:
+// 1.
+// filterForm.addEventListener('change', evt => {
+// let persistedFilters = localStorage.getItem(STORAGE_KEY)
+//  persistedFilters = persistedFilters ? JSON.parse(persistedFilters) : {};
+// persistedFilters[evt.target.name] = evt.target.value;
+// localStorage.setItem(STORAGE_KEY, JSON.stringify(persistedFilters));
+// });
+
+// 2.
+// filterForm.addEventListener('change', onChangeFilter)
+// function onChangeFilter (evt) {
+// let persistedFilters = localStorage.getItem(STORAGE_KEY)
+//  persistedFilters = persistedFilters ? JSON.parse(persistedFilters) : {};
+// persistedFilters[evt.target.name] = evt.target.value;
+// localStorage.setItem(STORAGE_KEY, JSON.stringify(persistedFilters));
+// });
