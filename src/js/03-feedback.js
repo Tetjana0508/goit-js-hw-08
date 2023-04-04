@@ -62,7 +62,9 @@ const filterForm = document.querySelector('.feedback-form');
 const textareaEl = document.querySelector('.feedback-form textarea')
 
 filterForm.addEventListener('submit', onFormSubmit); /* повешали слушатель на кнопку */
-textareaEl.addEventListener('input', throttle(onTextareaInput, 1000)); /* повешали слушатель на input */
+filterForm.addEventListener('input', throttle(inputEl, 1000)); /* повешали слушатель на input */
+// textareaEl.addEventListener('input', throttle(onTextareaInput, 1000)); 
+// filterForm.removeEventListener('click', onFormSubmit);
 
 populateTextarea();
 /* +++++++++++++++++++++++ОТПРАВКА/ЧИСТКА ФОРМЫ+++++++++++++++++++ */
@@ -72,18 +74,18 @@ function onFormSubmit(evt) { /* Отправка формы. Останавли�
   console.log('Отправляем форму');
   evt.currentTarget.reset(); /* reset() сбрасывает значение input (очищаем поля) в форме после отправки, evt.currentTarget - это форма, потому что onFormSubmit висит на filterForm.addEventListener */
   localStorage.removeItem(STORAGE_KEY); /* Очищение localStorage после отправки формы, передаем ключ */
-  // inputEl.removeEventListener();
+  filterForm.removeEventListener('submit', onFormSubmit);
 };
 // console.log(onFormSubmit);
 
-/*--------------------СЛУШАТЕЛЬ СОБЫТИЙ, пока убираем---------------------------- */
-function onTextareaInput(evt) { /* Получаем значение поля, сохраняем его в хранилище. Берем то что находится в value нашего input и записываем в localStorage */
-  const value = evt.target.value; /* События всплывают и функция onTextareaInput выполняется отложено каждые 1000 мс, поэтому когда сработало события и вызвалась функция это разное время, поэтому в evt.currentTarget будет лежать много чего, и в консоле будет выдавать ошибки throttle, а evt.target никогда не меняется */
-  localStorage.setItem(STORAGE_KEY, value); /* при каждом нажатии клавиши делаем setItem в этот ключ в это значение value */
-//   selectedFilters[evt.target.name] = evt.target.value;
-//   localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedFilters));
-  console.log(value);
-};
+/*--------------------СЛУШАТЕЛЬ СОБЫТИЙ---------------------------- */
+// function onTextareaInput(evt) { /* Получаем значение поля, сохраняем его в хранилище. Берем то что находится в value нашего input и записываем в localStorage */
+//   const value = evt.target.value; /* События всплывают и функция onTextareaInput выполняется отложено каждые 1000 мс, поэтому когда сработало события и вызвалась функция это разное время, поэтому в evt.currentTarget будет лежать много чего, и в консоле будет выдавать ошибки throttle, а evt.target никогда не меняется */
+//   localStorage.setItem(STORAGE_KEY, value); /* при каждом нажатии клавиши делаем setItem в этот ключ в это значение value */
+// //   selectedFilters[evt.target.name] = evt.target.value;
+// //   localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedFilters));
+//   console.log(value);
+// };
 
 /*++++++++++++++++++++++++++ДАННЫЕ ИЗ ЛОКАЛ.ХРАНИЛИЩА+++++++++++++++++++++++ */
 function populateTextarea() { /* Получаем значение из хранилища. Если были данны обновляем ДОМ. Будет вызываться при загрузке страницы */
@@ -100,13 +102,8 @@ function populateTextarea() { /* Получаем значение из хран
 }
 
 /*--------------------ДЕЛЕГИРОВАНИЕ ФОРМЫ_Слушатель на общий контейнер---------------------------- */
-// filterForm.addEventListener('input', e => { /* Делегирование. На форму вешаем прослушивание input */
-//   selectedFilters[e.target.name] = e.target.value; /* в объкт selectedFilters с ключем [e.target.name] ложим значение e.target.value - это реализация localStorage, но объект будем класть в localStorage */
-//   localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedFilters));
-//   console.log(selectedFilters);
-// });
 
-filterForm.addEventListener('input', inputEl);
+
 function inputEl (e) { /* Делегирование. На форму вешаем прослушивание input */
   selectedFilters[e.target.name] = e.target.value; /* в объкт selectedFilters с ключем [e.target.name] ложим значение e.target.value - это реализация localStorage, но объект будем класть в localStorage */
   localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedFilters));
