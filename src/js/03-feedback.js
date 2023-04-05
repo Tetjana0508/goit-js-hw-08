@@ -28,6 +28,13 @@ function onFormSubmit(evt) { /* Отправка формы. Останавли�
   filterForm.removeEventListener('submit', onFormSubmit);
 };
 // console.log(onFormSubmit);
+// function onSubmitPress(evt) {
+//   console.log(filterForm.elements['name'].value);
+//     if (filterForm.elements['name'].value === '') {
+//       onFormSubmit();
+//     }
+//   }
+
 
 /*--------------------СЛУШАТЕЛЬ СОБЫТИЙ---------------------------- */
 // function onTextareaInput(evt) { /* Получаем значение поля, сохраняем его в хранилище. Берем то что находится в value нашего input и записываем в localStorage */
