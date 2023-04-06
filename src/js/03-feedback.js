@@ -14,27 +14,34 @@ const textareaEl = document.querySelector('.feedback-form textarea')
 
 filterForm.addEventListener('submit', onFormSubmit); /* повешали слушатель на кнопку */
 filterForm.addEventListener('input', throttle(inputEl, 1000)); /* повешали слушатель на input */
-// textareaEl.addEventListener('input', throttle(onTextareaInput, 1000)); 
-// filterForm.removeEventListener('click', onFormSubmit);
 
 populateTextarea();
 /* +++++++++++++++++++++++ОТПРАВКА/ЧИСТКА ФОРМЫ+++++++++++++++++++ */
 function onFormSubmit(evt) { /* Отправка формы. Останавливаем поведение по умолчанию. Убираем сообщение из хранилища. Очищаем форму. */
   evt.preventDefault(); /* Запрет поведения по умолчанию, перезагрузку страницы */
+
+
+  let persistedFilters = localStorage.getItem(STORAGE_KEY); /* Получаем значение из localStorage, не можем запихнуть в input в textarea, если локал уже что-то есть, то будет значение в консоли, а если первый раз ввошли то отобразит null, поэтому проверяем, а есть ли там что-то */
+  persistedFilters = JSON.parse(persistedFilters);
+  // console.log(persistedFilters);
+
+  const formInputs = filterForm.elements;
+  for (let i = 0; i < formInputs.length; i++) {
+    if (!formInputs[i].name == "") {
+      // console.log(formInputs[i].name);
+      if (formInputs[i].value == "") {
+        // console.log("Value: ", formInputs[i].name);
+        alert('Пожалуйста, заполните поле: ', formInputs[i].value);
+        return;
+      }
+    }
+  } 
   selectedFilters = {};
   console.log('Отправляем форму');
-  evt.currentTarget.reset(); /* reset() сбрасывает значение input (очищаем поля) в форме после отправки, evt.currentTarget - это форма, потому что onFormSubmit висит на filterForm.addEventListener */
+  evt.target.reset(); /* reset() сбрасывает значение input (очищаем поля) в форме после отправки, evt.currentTarget - это форма, потому что onFormSubmit висит на filterForm.addEventListener */
   localStorage.removeItem(STORAGE_KEY); /* Очищение localStorage после отправки формы, передаем ключ */
-  filterForm.removeEventListener('submit', onFormSubmit);
+  // filterForm.removeEventListener('submit', onFormSubmit);
 };
-// console.log(onFormSubmit);
-// function onSubmitPress(evt) {
-//   console.log(filterForm.elements['name'].value);
-//     if (filterForm.elements['name'].value === '') {
-//       onFormSubmit();
-//     }
-//   }
-
 
 /*--------------------СЛУШАТЕЛЬ СОБЫТИЙ---------------------------- */
 // function onTextareaInput(evt) { /* Получаем значение поля, сохраняем его в хранилище. Берем то что находится в value нашего input и записываем в localStorage */
@@ -50,7 +57,7 @@ function populateTextarea() { /* Получаем значение из хран
   let persistedFilters = localStorage.getItem(STORAGE_KEY); /* Получаем значение из localStorage, не можем запихнуть в input в textarea, если локал уже что-то есть, то будет значение в консоли, а если первый раз ввошли то отобразит null, поэтому проверяем, а есть ли там что-то */
   if (persistedFilters) { /* если в localStorage нету такого ключа то нам вернется null, поэтому проверяем есть там что-то есть - приводит к true, то тогда можем с ним работать там какие-то данные, в противном ничего не делаем */
     persistedFilters = JSON.parse(persistedFilters);
-    console.log(persistedFilters);
+    // console.log(persistedFilters);
     Object.entries(persistedFilters).forEach(([name, value]) => {
       selectedFilters[name] = value;
       filterForm.elements[name].value = value; /* Обновляем ДОМ, берем textarea, записываем ей value */
